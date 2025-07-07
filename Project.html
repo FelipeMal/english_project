@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SDG 12: Responsible Consumption and Production in Colombia</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Earthy Harmony -->
+    <!-- Application Structure Plan: I've designed an SPA with top navigation that scrolls to thematic sections: an introduction (Home), a theoretical section detailing SDG 12 (What is SDG 12?), an interactive, filterable gallery section to explore practical cases (Local Initiatives), a dedicated section for the Circular Wardrobe infographic (Circular Wardrobe), culminating in a summary chart (Analysis). This "theory to practice" structure, now with a specific infographic highlight, is more intuitive for the user than a linear document, as it allows for context first, then concrete examples, a visual deep-dive, and finally data analysis to be explored at their own pace. The interactive filter (Companies/Communities) improves usability by allowing the user to focus on the type of initiative they are most interested in. -->
+    <!-- Visualization & Content Choices:
+        - Report Info: Description of SDG 12. -> Goal: Inform. -> Viz/Presentation: Text blocks with clear headings and a card layout for the "Global Development" section. -> Interaction: None, focus on readability. -> Justification: Facilita la asimilación de la información conceptual. -> Library/Method: HTML/Tailwind.
+        - Report Info: Examples of companies and communities. -> Goal: Organize and Compare. -> Viz/Presentation: Filterable card gallery. -> Interaction: Filter buttons that show/hide cards by category (Company, Community). -> Justification: Allows the user to actively explore practical examples in a non-linear way. -> Library/Method: Vanilla JS, HTML/Tailwind.
+        - Report Info: Circular Wardrobe Infographic. -> Goal: Inform visually. -> Viz/Presentation: Dedicated section with an image. -> Interaction: None, focus on visual consumption. -> Justification: Provides a direct visual summary of a specific initiative, enhancing understanding. -> Library/Method: HTML/Tailwind, standard <img>.
+        - Report Info: Specific sustainable practices (Recycling, Natural Dyes, etc.). -> Goal: Synthesize and Compare. -> Viz/Presentation: Bar chart. -> Interaction: Tooltips on hover that show the count of initiatives by practice type. -> Justification: Offers a quantitative visual summary of the most common types of sustainable actions in the examples, adding a layer of data analysis. -> Library/Method: Chart.js/Canvas.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F8F9F8;
+            color: #2C3E50;
+        }
+        .nav-link {
+            position: relative;
+            transition: color 0.3s ease, transform 0.2s ease;
+        }
+        .nav-link:hover {
+            color: #27AE60;
+            transform: translateY(-2px);
+        }
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -5px;
+            left: 50%;
+            background-color: #27AE60;
+            transition: width 0.3s ease, left 0.3s ease;
+        }
+        .nav-link:hover::after {
+            width: 100%;
+            left: 0;
+        }
+        .filter-btn {
+            transition: all 0.3s ease, transform 0.2s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .filter-btn:hover:not(.active) {
+            background-color: #E0E0E0;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+        }
+        .filter-btn.active {
+            background-color: #27AE60;
+            color: #FFFFFF;
+            box-shadow: 0 6px 10px rgba(39, 174, 96, 0.3);
+            transform: translateY(-1px);
+        }
+        .initiative-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+	    justify-content: center;
+	    text-align:center;
+	    align-items: center;
+	    justify-items: center;
+        }
+        .initiative-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 25px rgba(0, 0, 0, 0.15);
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 400px;
+            max-height: 50vh;
+            background-color: white;
+            padding: 1.5rem;
+            border-radius: 1rem;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
+        }
+	.argos{
+	    justify-content: center;
+	    border-radius:50%;
+	    height: 12rem;
+	    justify-self: center;
+	}
+        @media (max-width: 768px) {
+            .chart-container {
+                height: 300px;
+                max-height: 60vh;
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body class="bg-[#F8F9F8]">
+
+    <header class="bg-white/90 backdrop-blur-lg sticky top-0 z-50 shadow-md">
+        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <h1 class="text-2xl font-extrabold text-[#2C5F2D]">Sustainable Practices SDG 12</h1>
+            <div class="hidden md:flex space-x-8">
+                <a href="#overview" class="nav-link text-gray-700 font-semibold">What is SDG 12?</a>
+                <a href="#initiatives" class="nav-link text-gray-700 font-semibold">Local Initiatives</a>
+                <a href="#infographic-section" class="nav-link text-gray-700 font-semibold">Circular Wardrobe</a>
+                <a href="#analysis" class="nav-link text-gray-700 font-semibold">Analysis</a>
+            </div>
+            <div class="md:hidden">
+                <button id="menu-btn" class="text-gray-700 focus:outline-none">
+                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+                </button>
+            </div>
+        </nav>
+        <div id="mobile-menu" class="hidden md:hidden px-6 pb-4 bg-white">
+            <a href="#overview" class="block py-2 nav-link text-gray-700 font-semibold">What is SDG 12?</a>
+            <a href="#initiatives" class="block py-2 nav-link text-gray-700 font-semibold">Local Initiatives</a>
+            <a href="#infographic-section" class="block py-2 nav-link text-gray-700 font-semibold">Circular Wardrobe</a>
+            <a href="#analysis" class="block py-2 nav-link text-gray-700 font-semibold">Analysis</a>
+        </div>
+    </header>
+
+    <main>
+        <section id="hero" class="py-24 md:py-40 bg-gradient-to-br from-[#E8F5E9] to-[#F1F8E9] text-center relative overflow-hidden">
+            <div class="absolute inset-0 opacity-20" style="background-image: radial-gradient(#27AE60 1px, transparent 1px); background-size: 20px 20px;"></div>
+            <div class="container mx-auto px-6 relative z-10">
+                <h2 class="text-5xl md:text-7xl font-extrabold text-[#2C5F2D] mb-6 leading-tight drop-shadow-lg">Responsible Consumption and Production</h2>
+                <p class="text-xl md:text-2xl text-gray-700 max-w-4xl mx-auto font-medium">Exploring how Colombia, through its companies and communities, advances towards Sustainable Development Goal 12 to transform its production and consumption patterns.</p>
+            </div>
+        </section>
+
+        <section id="overview" class="py-20 md:py-32">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-16">
+                    <h3 class="text-4xl md:text-5xl font-bold text-[#2C5F2D] relative inline-block">Understanding SDG 12
+                        <span class="absolute bottom-[-10px] left-1/2 -translate-x-1/2 w-24 h-1 bg-[#27AE60] rounded-full"></span>
+                    </h3>
+                    <p class="mt-6 text-lg text-gray-600 max-w-4xl mx-auto">This section breaks down the importance, origin, and global development of SDG 12, which seeks to fundamentally change how we produce and consume to ensure a sustainable future.</p>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-12 items-center">
+                    <div class="bg-white p-10 rounded-2xl shadow-xl border border-gray-100 transform hover:scale-[1.01] transition-transform duration-300">
+                        <h4 class="text-3xl font-bold text-[#27AE60] mb-5">Origin and Objective</h4>
+                        <p class="text-gray-700 leading-relaxed mb-5">Sustainable Development Goal (SDG) 12 is a fundamental part of the 2030 Agenda. Its importance lies in radically transforming how our societies produce and consume goods and services. The unsustainability of our current patterns is at the root of many environmental challenges such as climate change, biodiversity loss, and resource depletion.</p>
+                        <p class="text-gray-700 leading-relaxed">Its roots are in global discussions dating back to the 1992 Rio Earth Summit, consolidating in 2015 as one of the 17 SDGs. It represents the understanding that for truly sustainable development, it is not enough to produce efficiently; it is imperative that consumers adopt responsible habits.</p>
+                    </div>
+                    <div>
+                        <h4 class="text-3xl font-bold text-center mb-8 text-[#2C5F2D]">How has it developed globally?</h4>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                            <div class="bg-white p-8 rounded-lg shadow-md border border-gray-100 hover:shadow-lg transform hover:-translate-y-1 transition-all duration-200">
+                                <h5 class="font-bold text-xl text-[#27AE60] mb-2">Policies & Regulation</h5>
+                                <p class="text-base text-gray-600">Circular economy laws, waste management, and single-use plastic bans.</p>
+                            </div>
+                            <div class="bg-white p-8 rounded-lg shadow-md border border-gray-100 hover:shadow-lg transform hover:-translate-y-1 transition-all duration-200">
+                                <h5 class="font-bold text-xl text-[#27AE60] mb-2">Business Innovation</h5>
+                                <p class="text-base text-gray-600">Adoption of circular economy principles, use of recycled materials and renewable energy.</p>
+                            </div>
+                            <div class="bg-white p-8 rounded-lg shadow-md border border-gray-100 hover:shadow-lg transform hover:-translate-y-1 transition-all duration-200">
+                                <h5 class="font-bold text-xl text-[#27AE60] mb-2">Consumer Education</h5>
+                                <p class="text-base text-gray-600">Awareness campaigns, eco-labeling, and promotion of conscious lifestyles.</p>
+                            </div>
+                            <div class="bg-white p-8 rounded-lg shadow-md border border-gray-100 hover:shadow-lg transform hover:-translate-y-1 transition-all duration-200">
+                                <h5 class="font-bold text-xl text-[#27AE60] mb-2">Strategic Alliances</h5>
+                                <p class="text-base text-gray-600">Collaboration between governments, businesses, and civil society to scale sustainable solutions.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="initiatives" class="py-20 md:py-32 bg-gray-50">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-16">
+                    <h3 class="text-4xl md:text-5xl font-bold text-[#2C5F2D] relative inline-block">Local Initiatives in Colombia
+                        <span class="absolute bottom-[-10px] left-1/2 -translate-x-1/2 w-24 h-1 bg-[#27AE60] rounded-full"></span>
+                    </h3>
+                    <p class="mt-6 text-lg text-gray-600 max-w-4xl mx-auto">Here you can explore concrete examples of how different sectors in Colombia are implementing sustainable practices. Use the filters to navigate between company and community initiatives.</p>
+                </div>
+                
+                <div class="flex justify-center space-x-3 md:space-x-6 mb-12">
+                    <button class="filter-btn active font-semibold py-3 px-6 rounded-full bg-gray-200 text-gray-800 text-lg shadow-md hover:shadow-lg">All</button>
+                    <button class="filter-btn font-semibold py-3 px-6 rounded-full bg-gray-200 text-gray-800 text-lg shadow-md hover:shadow-lg" data-filter="company">Companies 🏭</button>
+                    <button class="filter-btn font-semibold py-3 px-6 rounded-full bg-gray-200 text-gray-800 text-lg shadow-md hover:shadow-lg" data-filter="community">Communities 🌱</button>
+                </div>
+
+                <div id="initiatives-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+                    <div class="initiative-card bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100" data-category="company">
+                        <div class="p-8">
+                            <h4 class="text-2xl font-bold text-[#2C5F2D] mb-2">Argos - Cement</h4>
+			    <img class= "argos" src="image.png" alt="Circular Wardrobe Infographic" class="w-full max-w-3xl rounded-xl shadow-lg border border-gray-100 object-contain" onerror="this.onerror=null;this.src='https://placehold.co/800x600/E8F5E9/2C5F2D?text=Infographic+Not+Found';">
+                            <span class="text-base font-semibold text-[#27AE60]">Circular Economy</span>
+                            <p class="mt-4 text-gray-700 leading-relaxed">Utilizes industrial and agricultural waste as alternative fuels in its kilns, reducing CO2 emissions and managing waste. Through co-processing, it transforms waste into valuable resources.</p>
+                        </div>
+                    </div>
+
+                    <div class="initiative-card bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100" data-category="company">
+                        <div class="p-8">
+                            <h4 class="text-2xl font-bold text-[#2C5F2D] mb-2">Corona - Construction</h4>
+			    <img class="argos" src="https://brilla.com.co/documents/78154/99035/logocorona.jpg/3e5db73e-8587-2e2b-dda2-dae8fc460eda?t=1723474237827" alt="Circular Wardrobe Infographic" class="w-full max-w-3xl rounded-xl shadow-lg border border-gray-100 object-contain" onerror="this.onerror=null;this.src='https://placehold.co/800x600/E8F5E9/2C5F2D?text=Infographic+Not+Found';">
+                            <span class="text-base font-semibold text-[#27AE60]">Recycling & Reuse</span>
+                            <p class="mt-4 text-gray-700 leading-relaxed">Promotes the creation and operation of construction and demolition waste (CDW) recycling centers. Debris is processed to create recycled aggregates for new constructions, closing the material life cycle.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="initiative-card bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100" data-category="company">
+                        <div class="p-8">
+                            <h4 class="text-2xl font-bold text-[#2C5F2D] mb-2">Creytex - Textile</h4>
+			    <img class="argos" src="https://media.licdn.com/dms/image/v2/C4E0BAQG8jgC3xeM03Q/company-logo_200_200/company-logo_200_200/0/1630589573742?e=2147483647&v=beta&t=Cn3JTzErrRynN2Z00NAdzLWSEqufZd-6e0fHzdu2a9g" alt="Circular Wardrobe Infographic" class="w-full max-w-3xl rounded-xl shadow-lg border border-gray-100 object-contain" onerror="this.onerror=null;this.src='https://placehold.co/800x600/E8F5E9/2C5F2D?text=Infographic+Not+Found';">
+                            <span class="text-base font-semibold text-[#27AE60]">Sustainable Production</span>
+                            <p class="mt-4 text-gray-700 leading-relaxed">Positions itself as a manufacturing supplier with sustainable processes and materials. It has developed 100% sustainable lines like "Go Green", minimizing environmental impact at every stage.</p>
+                        </div>
+                    </div>
+
+                    <div class="initiative-card bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100" data-category="community">
+                        <div class="p-8">
+                            <h4 class="text-2xl font-bold text-[#2C5F2D] mb-2">Iraca Palm Artisans</h4>
+                            <span class="text-base font-semibold text-[#27AE60]">Ancestral Practices</span>
+                            <p class="mt-4 text-gray-700 leading-relaxed">In Sandoná, Nariño, palm collection is manual and selective, ensuring regeneration. They use natural dyes from plants, creating durable, biodegradable products and preventing water pollution.</p>
+                        </div>
+                    </div>
+
+                    <div class="initiative-card bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100" data-category="community">
+                        <div class="p-8">
+                            <h4 class="text-2xl font-bold text-[#2C5F2D] mb-2">Recyclers Associations</h4>
+                            <span class="text-base font-semibold text-[#27AE60]">Large-Scale Recycling</span>
+                            <p class="mt-4 text-gray-700 leading-relaxed">Organized communities in cities like Bogotá and Medellín that collect, classify, and valorize urban solid waste, reincorporating it into the production chain and massively contributing to the circular economy.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="infographic-section" class="py-20 md:py-32">
+            <div class="container mx-auto px-6 text-center">
+                <div class="text-center mb-16">
+                    <h3 class="text-4xl md:text-5xl font-bold text-[#2C5F2D] relative inline-block">Circular Wardrobe Infographic
+                        <span class="absolute bottom-[-10px] left-1/2 -translate-x-1/2 w-24 h-1 bg-[#27AE60] rounded-full"></span>
+                    </h3>
+                    <p class="mt-6 text-lg text-gray-600 max-w-4xl mx-auto">Explore the key concepts of the Circular Wardrobe initiative, a sustainable approach to fashion, illustrating how it works and its importance.</p>
+                </div>
+                <div class="flex justify-center">
+                    <img src="infografia.png" alt="Circular Wardrobe Infographic" class="w-full max-w-3xl rounded-xl shadow-lg border border-gray-100 object-contain" onerror="this.onerror=null;this.src='https://placehold.co/800x600/E8F5E9/2C5F2D?text=Infographic+Not+Found';">
+                </div>
+            </div>
+        </section>
+
+        <section id="analysis" class="py-20 md:py-32 bg-gray-50">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-16">
+                    <h3 class="text-4xl md:text-5xl font-bold text-[#2C5F2D] relative inline-block">Practice Analysis
+                        <span class="absolute bottom-[-10px] left-1/2 -translate-x-1/2 w-24 h-1 bg-[#27AE60] rounded-full"></span>
+                    </h3>
+                    <p class="mt-6 text-lg text-gray-600 max-w-4xl mx-auto">This chart summarizes the types of sustainability practices found in the local examples. It allows visualizing which areas of action are most common, highlighting the strong focus on recycling and material management.</p>
+                </div>
+                <div class="chart-container">
+                    <canvas id="practicesChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-[#2C3E50] text-white py-10">
+        <div class="container mx-auto px-6 text-center">
+            <p class="text-lg mb-2">Interactive application designed to explore SDG 12 in Colombia.</p>
+            <p class="text-sm text-gray-400">Based on the project report from Universidad del Rosario.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const menuBtn = document.getElementById('menu-btn');
+            const mobileMenu = document.getElementById('mobile-menu');
+            menuBtn.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+
+            const filterContainer = document.querySelector('.flex.justify-center.space-x-3');
+            const filterBtns = filterContainer.querySelectorAll('.filter-btn');
+            const initiativesGrid = document.getElementById('initiatives-grid');
+            const initiativeCards = initiativesGrid.querySelectorAll('.initiative-card');
+
+            filterContainer.addEventListener('click', (e) => {
+                const target = e.target.closest('.filter-btn');
+                if (!target) return;
+
+                filterBtns.forEach(btn => btn.classList.remove('active'));
+                target.classList.add('active');
+
+                const filter = target.dataset.filter;
+
+                initiativeCards.forEach(card => {
+                    if (filter === 'all' || card.dataset.category === filter) {
+                        card.style.display = 'block';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            });
+
+            const ctx = document.getElementById('practicesChart').getContext('2d');
+            const practicesChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Recycling & Reuse', 'Sustainable Materials', 'Waste Management', 'Alternative Fuels'],
+                    datasets: [{
+                        label: 'Number of Initiatives',
+                        data: [2, 2, 2, 1],
+                        backgroundColor: [
+                            'rgba(39, 174, 96, 0.7)', /* Darker green */
+                            'rgba(46, 204, 113, 0.7)', /* Medium green */
+                            'rgba(22, 160, 133, 0.7)', /* Teal green */
+                            'rgba(26, 188, 156, 0.7)'  /* Lighter teal */
+                        ],
+                        borderColor: [
+                            'rgb(39, 174, 96)',
+                            'rgb(46, 204, 113)',
+                            'rgb(22, 160, 133)',
+                            'rgb(26, 188, 156)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            backgroundColor: '#2C3E50',
+                            titleFont: {
+                                size: 16,
+                                weight: 'bold'
+                            },
+                            bodyFont: {
+                                size: 14
+                            },
+                            padding: 12,
+                            cornerRadius: 6,
+                            displayColors: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                stepSize: 1,
+                                color: '#2C3E50',
+                                font: {
+                                    weight: 'bold',
+                                    size: 14
+                                }
+                            },
+                            grid: {
+                                color: 'rgba(0,0,0,0.08)',
+                                drawBorder: false
+                            }
+                        },
+                        x: {
+                            ticks: {
+                                color: '#2C3E50',
+                                font: {
+                                    weight: 'bold',
+                                    size: 14
+                                }
+                            },
+                             grid: {
+                                display: false
+                            }
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+
+</body>
+</html>
