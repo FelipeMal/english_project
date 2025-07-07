@@ -10,12 +10,12 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
     <!-- Chosen Palette: Earthy Harmony -->
-    <!-- Application Structure Plan: I've designed an SPA with top navigation that scrolls to thematic sections: an introduction (Home), a theoretical section detailing SDG 12 (What is SDG 12?), an interactive, filterable gallery section to explore practical cases (Local Initiatives), a dedicated section for the Circular Wardrobe infographic (Circular Wardrobe), culminating in a summary chart (Analysis). This "theory to practice" structure, now with a specific infographic highlight, is more intuitive for the user than a linear document, as it allows for context first, then concrete examples, a visual deep-dive, and finally data analysis to be explored at their own pace. The interactive filter (Companies/Communities) improves usability by allowing the user to focus on the type of initiative they are most interested in. -->
+    <!-- Application Structure Plan: I've designed an SPA with top navigation that scrolls to thematic sections: an introduction (Home), a theoretical section detailing SDG 12 (What is SDG 12?), an interactive, filterable gallery section to explore practical cases (Local Initiatives), a dedicated section for the Circular Wardrobe infographic (Circular Wardobe), culminating in a summary chart (Analysis). This "theory to practice" structure, now with a specific infographic highlight, is more intuitive for the user than a linear document, as it allows for context first, then concrete examples, a visual deep-dive, and finally data analysis to be explored at their own pace. The interactive filter (Companies/Communities) improves usability by allowing the user to focus on the type of initiative they are most interested in. -->
     <!-- Visualization & Content Choices:
-        - Report Info: Description of SDG 12. -> Goal: Inform. -> Viz/Presentation: Text blocks with clear headings and a card layout for the "Global Development" section. -> Interaction: None, focus on readability. -> Justification: Facilita la asimilación de la información conceptual. -> Library/Method: HTML/Tailwind.
-        - Report Info: Examples of companies and communities. -> Goal: Organize and Compare. -> Viz/Presentation: Filterable card gallery. -> Interaction: Filter buttons that show/hide cards by category (Company, Community). -> Justification: Allows the user to actively explore practical examples in a non-linear way. -> Library/Method: Vanilla JS, HTML/Tailwind.
+        - Report Info: Description of SDG 12. -> Goal: Inform. -> Viz/Presentation: Text blocks with clear headings and a card layout for the "Global Development" section. -> Interaction: None, focus on readability. -> Justification: Facilitates assimilation of conceptual information. -> Library/Method: HTML/Tailwind.
+        - Report Info: Examples of companies and communities. -> Goal: Organise and Compare. -> Viz/Presentation: Filterable card gallery. -> Interaction: Filter buttons that show/hide cards by category (Company, Community). -> Justification: Allows the user to actively explore practical examples in a non-linear way. -> Library/Method: Vanilla JS, HTML/Tailwind.
         - Report Info: Circular Wardrobe Infographic. -> Goal: Inform visually. -> Viz/Presentation: Dedicated section with an image. -> Interaction: None, focus on visual consumption. -> Justification: Provides a direct visual summary of a specific initiative, enhancing understanding. -> Library/Method: HTML/Tailwind, standard <img>.
-        - Report Info: Specific sustainable practices (Recycling, Natural Dyes, etc.). -> Goal: Synthesize and Compare. -> Viz/Presentation: Bar chart. -> Interaction: Tooltips on hover that show the count of initiatives by practice type. -> Justification: Offers a quantitative visual summary of the most common types of sustainable actions in the examples, adding a layer of data analysis. -> Library/Method: Chart.js/Canvas.
+        - Report Info: Specific sustainable practices (Recycling, Natural Dyes, etc.). -> Goal: Synthesise and Compare. -> Viz/Presentation: Bar chart. -> Interaction: Tooltips on hover that show the count of initiatives by practice type. -> Justification: Offers a quantitative visual summary of the most common types of sustainable actions in the examples, adding a layer of data analysis. -> Library/Method: Chart.js/Canvas.
     -->
     <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
     <style>
@@ -63,10 +63,10 @@
         }
         .initiative-card {
             transition: transform 0.3s ease, box-shadow 0.3s ease;
-	    justify-content: center;
-	    text-align:center;
-	    align-items: center;
-	    justify-items: center;
+            justify-content: center;
+            text-align:center;
+            align-items: center;
+            justify-items: center;
         }
         .initiative-card:hover {
             transform: translateY(-8px);
@@ -85,12 +85,12 @@
             border-radius: 1rem;
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
         }
-	.argos{
-	    justify-content: center;
-	    border-radius:50%;
-	    height: 12rem;
-	    justify-self: center;
-	}
+        .argos{
+            justify-content: center;
+            border-radius:50%;
+            height: 12rem;
+            justify-self: center;
+	    }
         @media (max-width: 768px) {
             .chart-container {
                 height: 300px;
@@ -184,7 +184,7 @@
                 </div>
                 
                 <div class="flex justify-center space-x-3 md:space-x-6 mb-12">
-                    <button class="filter-btn active font-semibold py-3 px-6 rounded-full bg-gray-200 text-gray-800 text-lg shadow-md hover:shadow-lg">All</button>
+                    <button class="filter-btn active font-semibold py-3 px-6 rounded-full bg-gray-200 text-gray-800 text-lg shadow-md hover:shadow-lg" data-filter="all">All</button>
                     <button class="filter-btn font-semibold py-3 px-6 rounded-full bg-gray-200 text-gray-800 text-lg shadow-md hover:shadow-lg" data-filter="company">Companies 🏭</button>
                     <button class="filter-btn font-semibold py-3 px-6 rounded-full bg-gray-200 text-gray-800 text-lg shadow-md hover:shadow-lg" data-filter="community">Communities 🌱</button>
                 </div>
@@ -193,7 +193,7 @@
                     <div class="initiative-card bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100" data-category="company">
                         <div class="p-8">
                             <h4 class="text-2xl font-bold text-[#2C5F2D] mb-2">Argos - Cement</h4>
-			    <img class= "argos" src="image.png" alt="Circular Wardrobe Infographic" class="w-full max-w-3xl rounded-xl shadow-lg border border-gray-100 object-contain" onerror="this.onerror=null;this.src='https://placehold.co/800x600/E8F5E9/2C5F2D?text=Infographic+Not+Found';">
+                            <img class= "argos" src="image.png" alt="Circular Wardrobe Infographic" class="w-full max-w-3xl rounded-xl shadow-lg border border-gray-100 object-contain" onerror="this.onerror=null;this.src='https://placehold.co/800x600/E8F5E9/2C5F2D?text=Infographic+Not+Found';">
                             <span class="text-base font-semibold text-[#27AE60]">Circular Economy</span>
                             <p class="mt-4 text-gray-700 leading-relaxed">Utilizes industrial and agricultural waste as alternative fuels in its kilns, reducing CO2 emissions and managing waste. Through co-processing, it transforms waste into valuable resources.</p>
                         </div>
@@ -202,7 +202,7 @@
                     <div class="initiative-card bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100" data-category="company">
                         <div class="p-8">
                             <h4 class="text-2xl font-bold text-[#2C5F2D] mb-2">Corona - Construction</h4>
-			    <img class="argos" src="https://brilla.com.co/documents/78154/99035/logocorona.jpg/3e5db73e-8587-2e2b-dda2-dae8fc460eda?t=1723474237827" alt="Circular Wardrobe Infographic" class="w-full max-w-3xl rounded-xl shadow-lg border border-gray-100 object-contain" onerror="this.onerror=null;this.src='https://placehold.co/800x600/E8F5E9/2C5F2D?text=Infographic+Not+Found';">
+                            <img class="argos" src="https://brilla.com.co/documents/78154/99035/logocorona.jpg/3e5db73e-8587-2e2b-dda2-dae8fc460eda?t=1723474237827" alt="Circular Wardrobe Infographic" class="w-full max-w-3xl rounded-xl shadow-lg border border-gray-100 object-contain" onerror="this.onerror=null;this.src='https://placehold.co/800x600/E8F5E9/2C5F2D?text=Infographic+Not+Found';">
                             <span class="text-base font-semibold text-[#27AE60]">Recycling & Reuse</span>
                             <p class="mt-4 text-gray-700 leading-relaxed">Promotes the creation and operation of construction and demolition waste (CDW) recycling centers. Debris is processed to create recycled aggregates for new constructions, closing the material life cycle.</p>
                         </div>
@@ -211,7 +211,7 @@
                     <div class="initiative-card bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100" data-category="company">
                         <div class="p-8">
                             <h4 class="text-2xl font-bold text-[#2C5F2D] mb-2">Creytex - Textile</h4>
-			    <img class="argos" src="https://media.licdn.com/dms/image/v2/C4E0BAQG8jgC3xeM03Q/company-logo_200_200/company-logo_200_200/0/1630589573742?e=2147483647&v=beta&t=Cn3JTzErrRynN2Z00NAdzLWSEqufZd-6e0fHzdu2a9g" alt="Circular Wardrobe Infographic" class="w-full max-w-3xl rounded-xl shadow-lg border border-gray-100 object-contain" onerror="this.onerror=null;this.src='https://placehold.co/800x600/E8F5E9/2C5F2D?text=Infographic+Not+Found';">
+                            <img class="argos" src="https://media.licdn.com/dms/image/v2/C4E0BAQG8jgC3xeM03Q/company-logo_200_200/company-logo_200_200/0/1630589573742?e=2147483647&v=beta&t=Cn3JTzErrRynN2Z00NAdzLWSEqufZd-6e0fHzdu2a9g" alt="Circular Wardrobe Infographic" class="w-full max-w-3xl rounded-xl shadow-lg border border-gray-100 object-contain" onerror="this.onerror=null;this.src='https://placehold.co/800x600/E8F5E9/2C5F2D?text=Infographic+Not+Found';">
                             <span class="text-base font-semibold text-[#27AE60]">Sustainable Production</span>
                             <p class="mt-4 text-gray-700 leading-relaxed">Positions itself as a manufacturing supplier with sustainable processes and materials. It has developed 100% sustainable lines like "Go Green", minimizing environmental impact at every stage.</p>
                         </div>
@@ -245,7 +245,7 @@
                     <p class="mt-6 text-lg text-gray-600 max-w-4xl mx-auto">Explore the key concepts of the Circular Wardrobe initiative, a sustainable approach to fashion, illustrating how it works and its importance.</p>
                 </div>
                 <div class="flex justify-center">
-                    <img src="infografia.png" alt="Circular Wardrobe Infographic" class="w-full max-w-3xl rounded-xl shadow-lg border border-gray-100 object-contain" onerror="this.onerror=null;this.src='https://placehold.co/800x600/E8F5E9/2C5F2D?text=Infographic+Not+Found';">
+                    <img src="infografia.jpg" alt="Circular Wardrobe Infographic" class="w-full max-w-3xl rounded-xl shadow-lg border border-gray-100 object-contain" onerror="this.onerror=null;this.src='https://placehold.co/800x600/E8F5E9/2C5F2D?text=Infographic+Not+Found';">
                 </div>
             </div>
         </section>
@@ -296,8 +296,10 @@
                 const filter = target.dataset.filter;
 
                 initiativeCards.forEach(card => {
-                    if (filter === 'all' || card.dataset.category === filter) {
-                        card.style.display = 'block';
+                    if (filter === 'all') {
+                        card.style.display = ''; // Revert to default display (e.g., block or flex from Tailwind grid)
+                    } else if (card.dataset.category === filter) {
+                        card.style.display = ''; // Revert to default display
                     } else {
                         card.style.display = 'none';
                     }
